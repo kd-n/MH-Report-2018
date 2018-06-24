@@ -1,0 +1,73 @@
+Private Sub btnSaveTemplate_Click(sender As Object, e As EventArgs) Handles btnSaveTemplate.Click
+        btnUpload.Enabled = False
+        btnSaveTemplate.Enabled = False
+        btnBack.Enabled = False
+
+        objXLApp = New Excel.Application
+        Dim objXLApp1 = New Excel.ApplicationÅ@'///////////me
+        ' objXLApp.DisplayAlerts = False
+        Dim objXLWb, objXLWb2 As Excel.Workbook
+        Dim erajXLPath As String = Path.GetFullPath(My.Application.Info.DirectoryPath) + "\resources\erajTemplate"
+
+        objXLWb = objXLApp.Workbooks.Open(erajPath)
+        ' objXLWb2 = objXLApp.Workbooks.Open(erajXLPath)
+        objXLWb2 = objXLApp1.Workbooks.Open(erajXLPath) '/////////////me
+
+        Dim found As Boolean
+        Dim newExcelsheet As Excel.Worksheet
+        For Each xs As Excel.Worksheet In objXLWb.Sheets
+            If xs.Name = "Sheet1" Then  '///////////me
+                found = True
+                Exit For
+            End If
+        Next
+
+        If found = True Then
+            Dim xLsheet As Excel.Worksheet '///////////me
+            MsgBox(objXLWb2.Worksheets.Count)
+
+            '////////me start
+            xLsheet = objXLWb2.Worksheets.Add()
+            xLsheet.Name = "Sheet2"
+            MsgBox(objXLWb2.Worksheets.Count)
+            objXLWb2.Save()
+            objXLWb2.Close()
+            objXLWb2 = objXLApp1.Workbooks.Open(erajXLPath)
+            '/////////me end
+
+            objXLWb2.Worksheets("Sheet1").Delete()
+            '////////me start
+            xLsheet = objXLWb2.Worksheets.Add()
+            xLsheet.Name = "Sheet2"
+            MsgBox(objXLWb2.Worksheets.Count)
+            objXLWb2.Save()
+            objXLWb2.Close()
+            objXLWb2 = objXLApp1.Workbooks.Open(erajXLPath)
+            '/////////me end
+
+            objXLWb.Worksheets("Sheet1").Copy(, objXLWb2.Worksheets(1))
+            newExcelsheet = objXLWb2.Worksheets(objXLWb2.Worksheets.Count)
+            newExcelsheet.Name = "Sheet1"
+            objXLApp.DisplayAlerts = True
+            'objXLApp.DisplayAlerts = False
+            objXLWb2.Save()
+            objXLWb2.Close()
+            Marshal.ReleaseComObject(objXLWb2)
+            objXLWb2 = Nothing
+            MessageBox.Show("ERAJ template successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Else
+            MessageBox.Show("Template Missing. (Check if template sheet name is Sheet1)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+
+        objXLWb.Close()
+        Marshal.ReleaseComObject(objXLWb)
+        objXLWb = Nothing
+        objXLApp.Quit()
+        Marshal.ReleaseComObject(objXLApp)
+        objXLApp = Nothing
+        txtTemplate.Clear()
+
+        btnUpload.Enabled = True
+        'btnSaveTemplate.Enabled = True
+        btnBack.Enabled = True
+    End Sub
